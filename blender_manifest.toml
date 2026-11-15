@@ -4,11 +4,11 @@ id = "cueboard"
 version = "1.0.0"
 name = "Cueboard"
 tagline = "One-click Python cues for any workflow"
-maintainer = "JungSori"
+maintainer = "Sori"
 type = "add-on"
 
 license = ["SPDX:GPL-3.0-or-later"]
-copyright = ["2026 JungSori"]
+copyright = ["2026 Sori"]
 blender_version_min = "5.0.0"
 tags = ["User Interface", "Development"]
 

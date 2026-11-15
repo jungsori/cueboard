@@ -476,7 +476,7 @@ class CUEBOARD_OT_cue_image(_CueOp, bpy.types.Operator, ImportHelper):
 class CUEBOARD_OT_cue_icon_clear(_CueOp, bpy.types.Operator):
     bl_idname = "cueboard.cue_icon_clear"
     bl_label = "Clear Icon"
-    bl_description = "Show this cue's name instead of an icon"
+    bl_description = "Remove this cue's icon or image"
 
     def execute(self, context):
         c = self.cue()

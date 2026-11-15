@@ -23,7 +23,7 @@ _KO = {
     "Set Icon": "아이콘 지정", "Set Image Icon": "이미지 아이콘 지정", "Clear Icon": "아이콘 지우기",
     "Choose a Blender icon for this cue": "Blender 아이콘을 골라 이 큐에 씁니다",
     "Use an image file (PNG, JPG) as this cue's icon": "이미지 파일(PNG, JPG)을 이 큐의 아이콘으로 씁니다",
-    "Show this cue's name instead of an icon": "아이콘 대신 이름을 보여 줍니다",
+    "Remove this cue's icon or image": "이 큐의 아이콘·이미지를 지웁니다",
     "Could not load the image": "이미지를 불러오지 못했습니다",
     "Save Cue": "큐 저장", "Save this text into its cue": "이 텍스트를 큐에 저장합니다",
     "Editing: {}": "편집 중: {}",

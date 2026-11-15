@@ -8,6 +8,9 @@ from . import store
 
 COLUMNS = 10          # 한 줄에 10칸, 11번째부터 다음 줄(Maya 셸프처럼)
 UNIT = 20.0           # Blender 버튼 기본 높이(픽셀, UI 배율 1 기준)
+NAME_ROWS = 1.0       # 아이콘 큐 아래 이름 줄 높이(버튼 기본 높이 배수)
+ICON_ROWS = 1.4       # 아이콘 버튼 높이 — 낮을수록 아이콘이 이름에 붙는다(클릭 영역도 이 높이)
+BOX_PAD = 0.4         # 상자 안쪽 여백만큼 내용 높이를 줄여 칸이 정사각형에 가깝게(버튼 높이 배수)
 
 
 def _square_scale(context):
@@ -18,6 +21,27 @@ def _square_scale(context):
         return 1.6
     usable = region.width - 30 * ui                     # 패널 안쪽 여백
     return max(1.0, min(4.0, (usable / COLUMNS) / (UNIT * ui)))
+
+
+def _cells(row, n):
+    """줄을 n칸으로 똑같이 나눈다 — 버튼 내용(아이콘만·글자)과 상관없이 칸 폭이 같게.
+    (그냥 row에 넣으면 글자 있는 버튼만 남는 폭을 나눠 가져 아이콘 버튼이 좁아진다)
+    칸은 column — row 안에 넣으면 칸 폭이 버튼 내용(아이콘 크기)대로 줄어든다. column은 받은 폭을 꽉 채운다."""
+    cells, cur = [], row
+    for k in range(n - 1):
+        sp = cur.split(factor=1.0 / (n - k), align=True)
+        cells.append(sp.column(align=True))
+        cur = sp.column(align=True)
+    cells.append(cur)
+    return cells
+
+
+def _spacer(layout, rows):
+    """세로 빈칸(버튼 높이 배수) — 너무 얇으면 넣지 않는다."""
+    if rows >= 0.1:
+        sp = layout.row()
+        sp.scale_y = rows
+        sp.label(text="")
 
 
 def draw_tabs(layout):
@@ -35,22 +59,40 @@ def draw_board(layout, context):
     cs = store.cues()
     grid = layout.column(align=True)
     scale = _square_scale(context)
+    cell_h = max(scale - BOX_PAD, ICON_ROWS + NAME_ROWS)  # 상자 안 내용 높이 — 좁은 패널에서도 아이콘+이름이 들어가게
     for start in range(0, len(cs), COLUMNS):
-        row = grid.row(align=True)
-        row.scale_y = scale
-        for i in range(start, start + COLUMNS):
+        row = grid.row(align=True)                       # 줄 배율은 두지 않고 칸마다 준다(겹쳐 곱해지지 않게)
+        for k, cell in enumerate(_cells(row, COLUMNS)):
+            i = start + k
+            col = cell                                   # 칸 = column(받은 폭을 꽉 채움)
             if i >= len(cs):
-                row.label(text="")                       # 빈 칸 — 마지막 줄도 칸 크기를 같게
+                col.scale_y = cell_h
+                col.label(text="")                       # 빈 칸 — 마지막 줄도 칸 크기를 같게
                 continue
             c = cs[i]
             icon_id = icons.image_icon_id(c.get("image"))
-            if icon_id:
-                op = row.operator("cueboard.cue_run", text="", icon_value=icon_id)
-            elif c.get("icon"):
-                op = row.operator("cueboard.cue_run", text="", icon=c["icon"])
-            else:
-                op = row.operator("cueboard.cue_run", text=c["name"], translate=False)
-            op.index = i
+            box = col.box()                              # 칸 = 상자 하나(아이콘·이름을 한 상자 안에 두 줄로)
+            inner = box.column(align=True)
+            if icon_id or c.get("icon"):                 # 빈칸 · 아이콘(테두리 없는 실행 버튼) · 이름 · 빈칸
+                # 아이콘은 버튼 세로 가운데에 그려지므로, 버튼을 낮게 해 이름 바로 위에 붙이고
+                # 남는 높이는 위아래 빈칸으로 나눠 아이콘+이름 묶음을 상자 가운데에 둔다(상자 높이는 그대로)
+                rest = (cell_h - ICON_ROWS - NAME_ROWS) / 2.0
+                _spacer(inner, rest)
+                top = inner.column(align=True)
+                top.scale_y = ICON_ROWS
+                if icon_id:
+                    op = top.operator("cueboard.cue_run", text="", icon_value=icon_id, emboss=False)
+                else:
+                    op = top.operator("cueboard.cue_run", text="", icon=c["icon"], emboss=False)
+                op.index = i
+                cap = inner.row(align=True)
+                cap.scale_y = NAME_ROWS
+                cap.alignment = 'CENTER'
+                cap.label(text=c["name"], translate=False)
+                _spacer(inner, rest)
+            else:                                        # 이름만 — 같은 상자 높이에 이름 버튼(테두리 없음)
+                inner.scale_y = cell_h
+                inner.operator("cueboard.cue_run", text=c["name"], translate=False, emboss=False).index = i
     if not cs:
         layout.label(text=iface_("No cues yet"), icon='INFO')
     layout.operator("cueboard.cue_new", icon='ADD')

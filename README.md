@@ -6,7 +6,7 @@ Register any Python script as a button (a *cue*) and run it with one click from 
 
 - Blender 5.0 or later
 - License: GPL-3.0-or-later
-- Maintainer: JungSori
+- Maintainer: Sori
 
 ## Features
 
@@ -38,7 +38,7 @@ Please open an [issue](../../issues) with your Blender version and the steps to 
 
 ## 한국어
 
-**Cueboard**는 Maya 셸프처럼, Python 스크립트를 버튼(큐)으로 등록해 한 번에 실행하는 Blender 확장입니다.
+**Cueboard**는 Maya 셸프처럼, Python 스크립트를 버튼(큐)으로 등록해 실행하는 Blender 에드온입니다.
 
 - 3D 뷰와 Text Editor의 사이드바(`N`)에 Cueboard 패널
 - Text Editor의 스크립트를 큐로 등록하거나, 빈 큐를 만들어 나중에 작성
@@ -48,4 +48,4 @@ Please open an [issue](../../issues) with your Blender version and the steps to 
 - 큐는 사용자 폴더에 저장되어 모든 .blend 파일에서 같음
 - Blender 언어가 한국어면 화면도 한국어
 
-큐는 직접 작성하거나 등록한 코드만 실행합니다(Text Editor의 Run Script와 같음). 믿을 수 있는 코드만 등록해 주세요.
+큐는 직접 작성하거나 등록한 코드만 실행합니다. 믿을 수 있는 코드만 등록해 주세요.
